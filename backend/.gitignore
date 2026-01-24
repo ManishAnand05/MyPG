@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyd
+*.pdb
+
+# Virtual Environment
+venv/
+env/
+.venv/
+.env/
+
+# IDEs
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Database
+*.sqlite3
+
+# FastAPI / Uvicorn
+*.pid
+
+# OS
+.DS_Store
+Thumbs.db
+
+# dotenv
+.env
