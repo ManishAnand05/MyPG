@@ -1,6 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+<<<<<<< HEAD
 from app.schemas.user import UserCreate, UserLogin
+=======
+from app.schemas.user import UserCreate
+>>>>>>> 1826cb3 (path changes)
 from app.models.user import User
 from app.core.database import get_db
 
