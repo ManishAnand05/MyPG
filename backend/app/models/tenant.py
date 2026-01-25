@@ -13,3 +13,6 @@ class TenantProfile(Base):
     move_in_date = Column(Date, nullable=False)
 
     bed = relationship("Bed", back_populates="tenant")
+    user = relationship("User", back_populates="tenant_profile")
+    rents = relationship("Rent", back_populates="tenant")
+

@@ -11,4 +11,16 @@ app.include_router(auth.router)
 def root():
     return {"message": "MyPG backend running"}
 
+# ### TODO: REMOVE after Alembic is added
 
+# from app.core.database import Base, engine
+# from app.models import (
+#     user,
+#     pg,
+#     room,
+#     bed,
+#     tenant,
+#     rent,
+# )
+
+# Base.metadata.create_all(bind=engine)
