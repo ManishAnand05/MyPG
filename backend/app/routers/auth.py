@@ -5,7 +5,11 @@ from app.models.user import User
 from app.core.database import get_db
 from app.core.security import hash_password, create_access_token
 
+### Authentication Router :- All the auth related routes/endpoints will be defined here
+
 router = APIRouter(prefix="/auth", tags=["Auth"])
+
+### User Signup Endpoint :- Creates a new user and returns an access token, if email is not already registered
 
 @router.post("/signup")
 def signup(user: UserCreate, db: Session = Depends(get_db)):

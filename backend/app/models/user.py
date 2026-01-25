@@ -2,6 +2,8 @@ from sqlalchemy import Column, Integer, String, Enum
 from app.core.database import Base
 import enum
 
+### User Table Model
+
 class UserRole(str, enum.Enum):
     ADMIN = "ADMIN"
     TENANT = "TENANT"
@@ -13,6 +15,6 @@ class User(Base):
     name = Column(String, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     password_hash = Column(String, nullable=False)
-    role = Column(Enum(UserRole), default=UserRole.ADMIN)
+    role = Column(Enum(UserRole), default=UserRole.TENANT)
 
 
