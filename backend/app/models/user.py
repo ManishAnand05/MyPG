@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Enum
+from sqlalchemy.orm import relationship
 from app.core.database import Base
 import enum
 
@@ -16,5 +17,11 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     password_hash = Column(String, nullable=False)
     role = Column(Enum(UserRole), default=UserRole.TENANT)
+    pgs = relationship("PG", back_populates="admin")
+    tenant_profile = relationship(
+    "TenantProfile",
+    back_populates="user",
+    uselist=False
+)
 
 

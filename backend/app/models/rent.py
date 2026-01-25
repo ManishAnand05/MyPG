@@ -1,5 +1,6 @@
 import enum
 from sqlalchemy import Column, Integer, ForeignKey, Enum, String
+from sqlalchemy.orm import relationship
 from app.core.database import Base
 
 class RentStatus(str, enum.Enum):
@@ -14,3 +15,4 @@ class Rent(Base):
     month = Column(String, nullable=False)
     amount = Column(Integer, nullable=False)
     status = Column(Enum(RentStatus), default=RentStatus.DUE)
+    tenant = relationship("TenantProfile", back_populates="rents")
