@@ -2,12 +2,12 @@ from pydantic import BaseModel
 
 class RoomCreate(BaseModel):
     pg_id: int
-    room_number: str
+    room_number: int
 
-class RoomOut(BaseModel):
+class RoomResponse(BaseModel):
     id: int
     pg_id: int
-    room_number: str
+    room_number: int
 
     class Config:
         orm_mode = True

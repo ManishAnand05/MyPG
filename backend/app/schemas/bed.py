@@ -3,8 +3,8 @@ from pydantic import BaseModel
 class BedCreate(BaseModel):
     room_id: int
     rent: float
-
-class BedOut(BaseModel):
+    
+class BedResponse(BaseModel):
     id: int
     room_id: int
     rent: float
