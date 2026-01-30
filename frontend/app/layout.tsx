@@ -12,6 +12,7 @@ function Nav() {
   const [isChecking, setIsChecking] = useState(true);
   
   useEffect(() => {
+    // Check auth on mount and when pathname changes
     const checkAuth = async () => {
       try {
         await AuthApi.getMe();
@@ -23,7 +24,7 @@ function Nav() {
       }
     };
     checkAuth();
-  }, [pathname]);
+  }, [pathname]); // Recheck auth when route changes
   
   const handleSignOut = async () => {
     try {
@@ -40,30 +41,25 @@ function Nav() {
   return (
     <header className="header">
       <nav className="nav">
-        <Link href="/" className="nav-brand">
-          <div className="nav-brand-icon">🏢</div>
-          MyPG
-        </Link>
-        
+        <Link href="/">Home</Link>
         {isLoggedIn && (
           <>
-            <Link href="/pg" style={{color: pathname === '/pg' ? '#6366f1' : '#718096'}}>PGs</Link>
-            <Link href="/tenants" style={{color: pathname === '/tenants' ? '#6366f1' : '#718096'}}>Tenants</Link>
+            <Link href="/pg">PGs</Link>
+            <Link href="/tenants">Tenants</Link>
           </>
         )}
-        
-        <div className="nav-right">
+        {!isLoggedIn && !isChecking && (
+          <>
+            <Link href="/login">Login</Link>
+            <Link href="/signup">Signup</Link>
+          </>
+        )}
+        <div style={{marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8}}>
+          <span className={`pill ${isLoggedIn ? 'success' : 'muted'}`}>
+            {isLoggedIn ? 'Signed in' : 'Guest'}
+          </span>
           {isLoggedIn && (
-            <>
-              <span className="pill success">Signed in</span>
-              <button className="button secondary" onClick={handleSignOut}>↗ Sign Out</button>
-            </>
-          )}
-          {!isLoggedIn && !isChecking && (
-            <>
-              <Link href="/login" style={{color: '#6366f1', textDecoration: 'none', fontWeight: 600}}>Sign In</Link>
-              <Link href="/signup" className="button">Create Account</Link>
-            </>
+            <button className="button" onClick={handleSignOut}>Sign Out</button>
           )}
         </div>
       </nav>
@@ -76,12 +72,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <Nav />
-        <main className="container" style={{paddingTop: 24}}>
-          {children}
-        </main>
-        <footer className="footer">
-          © 2026 MyPG. Simplifying PG management.
-        </footer>
+        <main className="container">{children}</main>
       </body>
     </html>
   );
