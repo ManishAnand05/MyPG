@@ -8,6 +8,7 @@ export default function RoomsPage() {
   const params = useParams();
   const pgId = Number(params.pgId);
   const [rooms, setRooms] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -16,6 +17,8 @@ export default function RoomsPage() {
         setRooms(data);
       } catch {
         setRooms([]);
+      } finally {
+        setLoading(false);
       }
     };
     fetchRooms();
@@ -26,17 +29,24 @@ export default function RoomsPage() {
         <h2>Rooms for PG {pgId}</h2>
         <Link className="button" href={`/pg/${pgId}/rooms/create`}>Add Room</Link>
       </div>
-      <div className="grid">
-        {rooms.map(room => (
-          <div key={room.id} className="card">
-            <h3>Room #{room.room_number}</h3>
-            <div style={{display:'flex', gap:8}}>
-              <Link className="button secondary" href={`/rooms/${room.id}/beds`}>Beds</Link>
+      {loading ? (
+        <div className="card" style={{textAlign: 'center', padding: 60}}>
+          <div style={{fontSize: 48, marginBottom: 16}}>🚪</div>
+          <p style={{fontSize: 16, color: '#718096'}}>Loading rooms...</p>
+        </div>
+      ) : (
+        <div className="grid">
+          {rooms.map(room => (
+            <div key={room.id} className="card">
+              <h3>Room #{room.room_number}</h3>
+              <div style={{display:'flex', gap:8}}>
+                <Link className="button secondary" href={`/rooms/${room.id}/beds`}>Beds</Link>
+              </div>
             </div>
-          </div>
-        ))}
-        {rooms.length === 0 && <div className="card">No rooms yet.</div>}
-      </div>
+          ))}
+          {rooms.length === 0 && <div className="card">No rooms yet.</div>}
+        </div>
+      )}
     </div>
   );
 }

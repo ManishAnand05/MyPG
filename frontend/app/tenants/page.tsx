@@ -97,7 +97,12 @@ export default function TenantsPage() {
       </div>
 
       {/* Tenants Table */}
-      {loading ? null : tenants.length === 0 ? (
+      {loading ? (
+        <div className="card" style={{textAlign: 'center', padding: 60}}>
+          <div style={{fontSize: 48, marginBottom: 16}}>👥</div>
+          <p style={{fontSize: 16, color: '#718096'}}>Loading tenants...</p>
+        </div>
+      ) : tenants.length === 0 ? (
         <div className="card" style={{textAlign: 'center', padding: 40}}>
           <p style={{fontSize: 16, color: '#718096'}}>No tenants yet. Add one to get started.</p>
           <Link href="/tenants/create" className="button" style={{marginTop: 16, display: 'inline-block'}}>Add First Tenant</Link>

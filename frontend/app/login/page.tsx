@@ -24,7 +24,6 @@ export default function LoginPage() {
       await AuthApi.login(email, password);
       const redirect = searchParams.get('redirect') || '/pg';
       router.push(redirect);
-      router.refresh();
     } catch (err: any) {
       setError(err.message || 'Login failed');
     }
