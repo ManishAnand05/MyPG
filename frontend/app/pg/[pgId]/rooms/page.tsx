@@ -36,14 +36,45 @@ export default function RoomsPage() {
         </div>
       ) : (
         <div className="grid">
-          {rooms.map(room => (
-            <div key={room.id} className="card">
-              <h3>Room #{room.room_number}</h3>
-              <div style={{display:'flex', gap:8}}>
-                <Link className="button secondary" href={`/rooms/${room.id}/beds`}>Beds</Link>
+          {rooms.map(room => {
+            const hasOccupiedBeds = room.beds?.some((bed: any) => bed.is_occupied);
+            return (
+              <div key={room.id} className="card">
+                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: 12}}>
+                  <h3 style={{margin: 0}}>Room #{room.room_number}</h3>
+                  <button
+                    onClick={async () => {
+                      if (window.confirm(`Delete Room #${room.room_number}?`)) {
+                        try {
+                          await RoomApi.delete(room.id);
+                          setRooms(rooms.filter(r => r.id !== room.id));
+                        } catch (err: any) {
+                          alert(err.message || 'Failed to delete room');
+                        }
+                      }
+                    }}
+                    disabled={hasOccupiedBeds}
+                    title={hasOccupiedBeds ? "Cannot delete: occupied beds exist" : "Delete room"}
+                    style={{
+                      background: hasOccupiedBeds ? '#d1d5db' : '#ef4444',
+                      color: '#fff',
+                      border: 'none',
+                      padding: '6px 12px',
+                      borderRadius: '6px',
+                      cursor: hasOccupiedBeds ? 'not-allowed' : 'pointer',
+                      fontSize: 12,
+                      fontWeight: 600
+                    }}
+                  >
+                    🗑️
+                  </button>
+                </div>
+                <div style={{display:'flex', gap:8}}>
+                  <Link className="button secondary" href={`/rooms/${room.id}/beds`}>Beds</Link>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
           {rooms.length === 0 && <div className="card">No rooms yet.</div>}
         </div>
       )}

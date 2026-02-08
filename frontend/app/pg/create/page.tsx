@@ -26,8 +26,8 @@ export default function PgCreatePage() {
       <form className="form" onSubmit={onSubmit}>
         <input className="input" placeholder="Name" value={name} onChange={e => setName(e.target.value)} required />
         <input className="input" placeholder="Address" value={address} onChange={e => setAddress(e.target.value)} required />
-        {error && <div style={{color:'crimson'}}>{error}</div>}
-        <button className="button" type="submit">Create</button>
+        {error && <div style={{color:'crimson', marginBottom: 16}}>{error}</div>}
+        <button className="button" type="submit" style={{width: '100%'}}>Create PG</button>
       </form>
       <p style={{marginTop:8}}>Requires admin role; backend returns 403 otherwise.</p>
     </div>

@@ -38,9 +38,41 @@ export default function BedsPage() {
         <div className="grid">
           {beds.map(bed => (
             <div key={bed.id} className="card">
-              <h3>Bed #{bed.id}</h3>
-              <p>Rent: ₹{bed.rent}</p>
-              <p>Status: {bed.is_occupied ? 'Occupied' : 'Available'}</p>
+              <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: 12}}>
+                <div>
+                  <h3 style={{margin: '0 0 8px 0'}}>Bed #{bed.id}</h3>
+                  <p style={{margin: 0, color: '#718096', fontSize: 14}}>Rent: ₹{bed.rent}</p>
+                  <p style={{margin: '4px 0 0 0', color: bed.is_occupied ? '#10b981' : '#ef4444', fontSize: 12, fontWeight: 600}}>
+                    {bed.is_occupied ? '✓ Occupied' : '○ Available'}
+                  </p>
+                </div>
+                <button
+                  onClick={async () => {
+                    if (window.confirm(`Delete Bed #${bed.id}?`)) {
+                      try {
+                        await BedApi.delete(bed.id);
+                        setBeds(beds.filter(b => b.id !== bed.id));
+                      } catch (err: any) {
+                        alert(err.message || 'Failed to delete bed');
+                      }
+                    }
+                  }}
+                  disabled={bed.is_occupied}
+                  title={bed.is_occupied ? "Cannot delete: bed is occupied" : "Delete bed"}
+                  style={{
+                    background: bed.is_occupied ? '#d1d5db' : '#ef4444',
+                    color: '#fff',
+                    border: 'none',
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    cursor: bed.is_occupied ? 'not-allowed' : 'pointer',
+                    fontSize: 12,
+                    fontWeight: 600
+                  }}
+                >
+                  🗑️
+                </button>
+              </div>
             </div>
           ))}
           {beds.length === 0 && <div className="card">No beds yet.</div>}

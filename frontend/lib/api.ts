@@ -60,6 +60,10 @@ export const RoomApi = {
     apiFetch<{ id: number; pg_id: number; room_number: number }>(`/rooms/create`, {
       method: 'POST',
       body: JSON.stringify({ pg_id: pgId, room_number: roomNumber })
+    }),
+  delete: (roomId: number) =>
+    apiFetch<{ message: string }>(`/rooms/${roomId}`, {
+      method: 'DELETE'
     })
 };
 
@@ -69,6 +73,10 @@ export const BedApi = {
     apiFetch<{ id: number; room_id: number; rent: number; is_occupied: boolean }>(`/beds/create`, {
       method: 'POST',
       body: JSON.stringify({ room_id: roomId, rent })
+    }),
+  delete: (bedId: number) =>
+    apiFetch<{ message: string }>(`/beds/${bedId}`, {
+      method: 'DELETE'
     })
 };
 
