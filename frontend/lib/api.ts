@@ -27,10 +27,10 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export const AuthApi = {
-  signup: (name: string, email: string, password: string) =>
+  signup: (name: string, email: string, password: string, inviteCode?: string) =>
     apiFetch<{ access_token: string }>(`/auth/signup`, {
       method: 'POST',
-      body: JSON.stringify({ name, email, password })
+      body: JSON.stringify({ name, email, password, invite_code: inviteCode })
     }),
   login: (email: string, password: string) =>
     apiFetch<{ access_token: string; token_type: string }>(`/auth/login`, {
@@ -42,7 +42,12 @@ export const AuthApi = {
       method: 'POST'
     }),
   getMe: () =>
-    apiFetch<{ id: number; name: string; email: string; role: string }>(`/auth/me`)
+    apiFetch<{ id: number; name: string; email: string; role: string }>(`/auth/me`),
+  generateInvite: (pgId: number) =>
+    apiFetch<{ invite_code: string; pg_name: string }>('/auth/invite/generate', {
+      method: 'POST',
+      body: JSON.stringify({ pg_id: pgId })
+    })
 };
 
 export const PgApi = {

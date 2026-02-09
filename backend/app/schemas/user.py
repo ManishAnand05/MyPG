@@ -1,4 +1,5 @@
 from pydantic import BaseModel, EmailStr
+from typing import Optional
 from enum import Enum
 
 ### Pydantic Schemas for User :- Used for data validation and serialization
@@ -11,6 +12,7 @@ class UserCreate(BaseModel):
     name: str
     email: EmailStr
     password: str
+    invite_code: Optional[str] = None
 
 class UserLogin(BaseModel):
     email: EmailStr
@@ -24,3 +26,6 @@ class UserResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class InviteGenerateRequest(BaseModel):
+    pg_id: int

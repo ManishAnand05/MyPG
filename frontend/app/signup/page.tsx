@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { AuthApi } from '../../lib/api';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
 export default function SignupPage() {
@@ -10,6 +10,8 @@ export default function SignupPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const inviteCode = searchParams.get('invite');
 
   useEffect(() => {
     AuthApi.getMe()
@@ -21,7 +23,7 @@ export default function SignupPage() {
     e.preventDefault();
     setError(null);
     try {
-      await AuthApi.signup(name, email, password);
+      await AuthApi.signup(name, email, password, inviteCode || undefined);
       router.push('/login');
     } catch (err: any) {
       setError(err.message || 'Signup failed');
@@ -35,6 +37,11 @@ export default function SignupPage() {
           <div className="hero-icon" style={{margin: '0 auto 16px'}}>🏢</div>
           <h2 style={{marginBottom: 4}}>Create an Account</h2>
           <p>Start managing your PGs and tenants today</p>
+          {inviteCode && (
+            <div style={{marginTop: 12, padding: 12, background: '#f0fdf4', border: '1px solid #86efac', borderRadius: 8}}>
+              <p style={{margin: 0, fontSize: 13, color: '#166534'}}>✓ You're signing up with an invite code</p>
+            </div>
+          )}
         </div>
 
         <form className="form" onSubmit={onSubmit}>

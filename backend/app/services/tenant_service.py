@@ -9,16 +9,21 @@ from app.models.user import User, UserRole
 def get_unassigned_tenants(db: Session, current_user: User = None):
     """
     Get all users with role=TENANT who don't have a TenantProfile yet
+    Filtered by users who were invited to the current admin's PGs
     """
     if not current_user:
         return []
     
-    # Get users who are tenants but don't have a tenant_profile
+    # Get PG IDs owned by current admin
+    admin_pg_ids = [pg.id for pg in current_user.pgs]
+    
+    # Get users who are tenants, don't have a tenant_profile, and were invited to admin's PGs
     unassigned = db.query(User).outerjoin(
         TenantProfile, User.id == TenantProfile.user_id
     ).filter(
         User.role == UserRole.TENANT,
-        TenantProfile.id == None
+        TenantProfile.id == None,
+        User.invited_pg_id.in_(admin_pg_ids)
     ).all()
     
     return [
@@ -35,13 +40,36 @@ def create_tenant(
     db: Session,
     user_id: int,
     bed_id: int,
-    move_in_date
+    move_in_date,
+    current_user: User = None
 ):
+    # Verify the bed exists
     bed = db.query(Bed).filter(Bed.id == bed_id).first()
-
     if not bed:
         raise HTTPException(status_code=404, detail="Bed not found")
 
+    # Get the room and PG for ownership verification
+    room = db.query(Room).filter(Room.id == bed.room_id).first()
+    if not room:
+        raise HTTPException(status_code=404, detail="Room not found")
+    
+    pg = db.query(PG).filter(PG.id == room.pg_id).first()
+    if not pg:
+        raise HTTPException(status_code=404, detail="PG not found")
+    
+    # Authorization check: Admin must own the PG
+    if current_user and pg.admin_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to assign tenants to this PG")
+    
+    # Verify the user exists and is a tenant
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    if user.role != UserRole.TENANT:
+        raise HTTPException(status_code=400, detail="User must have TENANT role")
+
+    # Check if bed is already occupied
     if bed.is_occupied:
         raise HTTPException(status_code=400, detail="Bed already occupied")
 

@@ -15,13 +15,15 @@ def list_unassigned_tenants(db: Session = Depends(get_db), current_user: User = 
 @router.post("/create", response_model=TenantOut)
 def add_tenant(
     tenant: TenantCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     return create_tenant(
         db,
         tenant.user_id,
         tenant.bed_id,
-        tenant.move_in_date
+        tenant.move_in_date,
+        current_user
     )
 
 @router.get("/", response_model=list[TenantOut])
