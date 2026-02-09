@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { RoomApi } from '../../../../lib/api';
+import { PgApi, RoomApi } from '../../../../lib/api';
 import { useParams } from 'next/navigation';
 
 export default function RoomsPage() {
@@ -9,12 +9,18 @@ export default function RoomsPage() {
   const pgId = Number(params.pgId);
   const [rooms, setRooms] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [pgName, setPgName] = useState<string>('');
 
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const data = await RoomApi.list(pgId);
-        setRooms(data);
+        const [roomData, pgData] = await Promise.all([
+          RoomApi.list(pgId),
+          PgApi.list()
+        ]);
+        setRooms(roomData);
+        const match = pgData.find(pg => pg.id === pgId);
+        setPgName(match?.name || '');
       } catch {
         setRooms([]);
       } finally {
@@ -26,7 +32,7 @@ export default function RoomsPage() {
   return (
     <div>
       <div className="card" style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-        <h2>Rooms for PG {pgId}</h2>
+        <h2>Rooms for {pgName || `PG ${pgId}`}</h2>
         <Link className="button" href={`/pg/${pgId}/rooms/create`}>Add Room</Link>
       </div>
       {loading ? (

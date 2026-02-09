@@ -1,10 +1,16 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.core.database import get_db
+from app.core.auth import get_current_user
+from app.models.user import User
 from app.schemas.bed import BedCreate, BedResponse
-from app.services.bed_service import create_bed, get_beds, delete_bed
+from app.services.bed_service import create_bed, get_beds, delete_bed, get_available_beds_grouped
 
 router = APIRouter(prefix="/beds", tags=["Beds"])
+
+@router.get("/available")
+def list_available_beds(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return get_available_beds_grouped(db, current_user)
 
 @router.post("/create", response_model=BedResponse)
 def add_bed(bed: BedCreate, db: Session = Depends(get_db)):

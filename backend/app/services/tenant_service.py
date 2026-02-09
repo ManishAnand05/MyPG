@@ -4,7 +4,32 @@ from app.models.tenant import TenantProfile
 from app.models.bed import Bed
 from app.models.room import Room
 from app.models.pg import PG
-from app.models.user import User
+from app.models.user import User, UserRole
+
+def get_unassigned_tenants(db: Session, current_user: User = None):
+    """
+    Get all users with role=TENANT who don't have a TenantProfile yet
+    """
+    if not current_user:
+        return []
+    
+    # Get users who are tenants but don't have a tenant_profile
+    unassigned = db.query(User).outerjoin(
+        TenantProfile, User.id == TenantProfile.user_id
+    ).filter(
+        User.role == UserRole.TENANT,
+        TenantProfile.id == None
+    ).all()
+    
+    return [
+        {
+            "id": user.id,
+            "name": user.name,
+            "email": user.email,
+            "role": user.role.value
+        }
+        for user in unassigned
+    ]
 
 def create_tenant(
     db: Session,

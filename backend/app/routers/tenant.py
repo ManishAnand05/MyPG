@@ -4,9 +4,13 @@ from app.core.database import get_db
 from app.core.auth import get_current_user
 from app.models.user import User
 from app.schemas.tenant import TenantCreate, TenantOut
-from app.services.tenant_service import create_tenant, get_tenants
+from app.services.tenant_service import create_tenant, get_tenants, get_unassigned_tenants
 
 router = APIRouter(prefix="/tenants", tags=["Tenants"])
+
+@router.get("/unassigned")
+def list_unassigned_tenants(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return get_unassigned_tenants(db, current_user)
 
 @router.post("/create", response_model=TenantOut)
 def add_tenant(

@@ -69,6 +69,7 @@ export const RoomApi = {
 
 export const BedApi = {
   list: (roomId: number) => apiFetch<Array<{ id: number; room_id: number; rent: number; is_occupied: boolean }>>(`/beds/${roomId}`),
+  available: () => apiFetch<Array<{ bed_id: number; rent: number; room_id: number; room_number: number; pg_id: number; pg_name: string; pg_address: string }>>('/beds/available'),
   create: (roomId: number, rent: number) =>
     apiFetch<{ id: number; room_id: number; rent: number; is_occupied: boolean }>(`/beds/create`, {
       method: 'POST',
@@ -82,6 +83,7 @@ export const BedApi = {
 
 export const TenantApi = {
   list: () => apiFetch<Array<{ id: number; user_id: number; bed_id: number; move_in_date: string; user_name: string; user_email: string; room_number: number; pg_name: string }>>('/tenants'),
+  unassigned: () => apiFetch<Array<{ id: number; name: string; email: string; role: string }>>('/tenants/unassigned'),
   create: (userId: number, bedId: number, moveInDate: string) =>
     apiFetch<{ id: number; user_id: number; bed_id: number; move_in_date: string; user_name: string; user_email: string; room_number: number; pg_name: string }>(`/tenants/create`, {
       method: 'POST',
