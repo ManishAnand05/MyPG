@@ -12,3 +12,5 @@ class PG(Base):
     admin_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
     rooms = relationship("Room", back_populates="pg", cascade="all, delete")
+    admin = relationship("User", back_populates="pgs", foreign_keys=[admin_id])
+
