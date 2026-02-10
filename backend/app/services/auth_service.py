@@ -10,16 +10,19 @@ def signup_service(db: Session, name: str, email: str, password: str, invite_cod
         return None, "Email already registered"
 
     invited_pg_id = None
+    invite_admin = None
     
     # If invite code provided, validate and get PG
     if invite_code:
         admin = db.query(User).filter(User.invite_code == invite_code).first()
         if not admin:
             return None, "Invalid invite code"
-        
+
         invited_pg_id = admin.invited_pg_id
         if not invited_pg_id:
             return None, "Invite code is not linked to a PG"
+
+        invite_admin = admin
 
     new_user = User(
         name=name,
@@ -29,6 +32,12 @@ def signup_service(db: Session, name: str, email: str, password: str, invite_cod
     )
 
     db.add(new_user)
+
+    # Single-use invite: invalidate code after first successful signup
+    if invite_admin:
+        invite_admin.invite_code = None
+        invite_admin.invited_pg_id = None
+
     db.commit()
     db.refresh(new_user)
 
