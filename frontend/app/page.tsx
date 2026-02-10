@@ -1,6 +1,30 @@
+'use client';
+
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { AuthApi } from '@/lib/api';
+import { useRouter } from 'next/navigation';
 
 export default function HomePage() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
+  const router = useRouter();
+
+  useEffect(() => {
+    AuthApi.getMe()
+      .then(() => {
+        setIsLoggedIn(true);
+        // Optionally redirect to dashboard
+        router.push('/pg');
+      })
+      .catch(() => setIsLoggedIn(false))
+      .finally(() => setIsChecking(false));
+  }, [router]);
+
+  if (isChecking) {
+    return null; // Or a loading spinner
+  }
+
   return (
     <div>
       {/* Hero Section */}
@@ -12,11 +36,15 @@ export default function HomePage() {
           MyPG helps PG owners easily manage rooms, tenants, and day-to-day operations through a clean and modern dashboard. 
           Everything you need is organized in one place, so you can spend less time managing and more time growing.
         </p>
-        <div className="hero-actions">
-          <Link href="/signup" className="button hero-link">Get Started Free</Link>
-          <Link href="/login" className="button secondary hero-link" style={{background: '#fff', color: '#6366f1', border: '1px solid #e2e8f0'}}>Sign In</Link>
-        </div>
-        <p style={{fontSize: 12, marginTop: 16}}>No credit card required • Start managing in minutes</p>
+        {!isLoggedIn && (
+          <>
+            <div className="hero-actions">
+              <Link href="/signup" className="button hero-link">Get Started Free</Link>
+              <Link href="/login" className="button secondary hero-link" style={{background: '#fff', color: '#6366f1', border: '1px solid #e2e8f0'}}>Sign In</Link>
+            </div>
+            <p style={{fontSize: 12, marginTop: 16}}>No credit card required • Start managing in minutes</p>
+          </>
+        )}
       </div>
 
       {/* Features Section */}
@@ -66,14 +94,16 @@ export default function HomePage() {
       </div>
 
       {/* CTA Section */}
-      <div className="cta-section">
-        <h2>Ready to simplify your PG management?</h2>
-        <p>Join PG owners who are saving time and staying organized with MyPG</p>
-        <div className="hero-actions">
-          <Link href="/signup" className="button" style={{background: '#fff', color: '#6366f1'}}>Create Free Account</Link>
-          <Link href="/login" className="button" style={{background: 'rgba(255, 255, 255, 0.2)', color: '#fff', border: '1px solid rgba(255, 255, 255, 0.3)'}}>Sign In</Link>
+      {!isLoggedIn && (
+        <div className="cta-section">
+          <h2>Ready to simplify your PG management?</h2>
+          <p>Join PG owners who are saving time and staying organized with MyPG</p>
+          <div className="hero-actions">
+            <Link href="/signup" className="button" style={{background: '#fff', color: '#6366f1'}}>Create Free Account</Link>
+            <Link href="/login" className="button" style={{background: 'rgba(255, 255, 255, 0.2)', color: '#fff', border: '1px solid rgba(255, 255, 255, 0.3)'}}>Sign In</Link>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
